@@ -84,6 +84,22 @@ jobs:
       - name: Export requirements.txt
         run: uv export --format requirements-txt --output-file requirements.txt
 
+      - name: Cache Trivy database
+        uses: yogeshlonkar/trivy-cache-action@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        if: ${{ inputs.fail-on-vulnerabilities }}
+        with:
+          scan-type: 'fs'
+          scan-ref: '${{ inputs.build-context }}'
+          format: 'table'
+          exit-code: '1'  # Fail on vulnerabilities
+          severity: '${{ inputs.trivy-severity }}'
+          ignore-unfixed: ${{ inputs.ignore-unfixed }}
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -135,17 +151,6 @@ jobs:
             licenses.json
           retention-days: ${{ inputs.artifact-retention-days }}
 
-      - name: Check vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        if: ${{ inputs.fail-on-vulnerabilities }}
-        with:
-          scan-type: 'fs'
-          scan-ref: '${{ inputs.build-context }}'
-          format: 'table'
-          exit-code: '1'  # Fail on vulnerabilities
-          severity: '${{ inputs.trivy-severity }}'
-          ignore-unfixed: ${{ inputs.ignore-unfixed }}
-
   trivy-scan-docker:
     runs-on: ubuntu-latest
     needs: trivy-scan
@@ -163,6 +168,22 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t ${{ inputs.docker-image-name }}:latest -f ${{ inputs.dockerfile-path }} ${{ inputs.build-context }}
+
+      - name: Cache Trivy database
+        uses: yogeshlonkar/trivy-cache-action@v0
+        with:
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        if: ${{ inputs.fail-on-vulnerabilities }}
+        with:
+          scan-type: 'image'
+          scan-ref: '${{ inputs.docker-image-name }}:latest'
+          format: 'table'
+          exit-code: '1'  # Fail on vulnerabilities
+          severity: '${{ inputs.trivy-severity }}'
+          ignore-unfixed: ${{ inputs.ignore-unfixed }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -214,17 +235,6 @@ jobs:
           path: |
             licenses-image.json
           retention-days: ${{ inputs.artifact-retention-days }}
-
-      - name: Check vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        if: ${{ inputs.fail-on-vulnerabilities }}
-        with:
-          scan-type: 'image'
-          scan-ref: '${{ inputs.docker-image-name }}:latest'
-          format: 'table'
-          exit-code: '1'  # Fail on vulnerabilities
-          severity: '${{ inputs.trivy-severity }}'
-          ignore-unfixed: ${{ inputs.ignore-unfixed }}
 
   docker-build:
     runs-on: ubuntu-latest
