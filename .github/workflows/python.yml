@@ -52,6 +52,11 @@ on:
         required: false
         type: boolean
         default: true
+      exit-code:
+        description: 'Exit code to use when vulnerabilities are found'
+        required: false
+        type: string
+        default: '1'
     secrets:
       registry-username:
         description: 'Docker registry username (defaults to github.repository_owner)'
@@ -142,7 +147,7 @@ jobs:
           scan-type: 'fs'
           scan-ref: '${{ inputs.build-context }}'
           format: 'table'
-          exit-code: '1'  # Fail on vulnerabilities
+          exit-code: '${{ inputs.exit-code }}'
           severity: '${{ inputs.trivy-severity }}'
           ignore-unfixed: ${{ inputs.ignore-unfixed }}
 
@@ -222,7 +227,7 @@ jobs:
           scan-type: 'image'
           scan-ref: '${{ inputs.docker-image-name }}:latest'
           format: 'table'
-          exit-code: '1'  # Fail on vulnerabilities
+          exit-code: '${{ inputs.exit-code }}'
           severity: '${{ inputs.trivy-severity }}'
           ignore-unfixed: ${{ inputs.ignore-unfixed }}
 
