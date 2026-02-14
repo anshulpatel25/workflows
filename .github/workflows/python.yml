@@ -53,7 +53,7 @@ on:
         type: boolean
         default: true
       exit-code:
-        description: 'Exit code to use when vulnerabilities are found'
+        description: "Exit code to use when vulnerabilities are found. Set to '0' to report vulnerabilities without failing the build (differs from fail-on-vulnerabilities which skips the check entirely)."
         required: false
         type: string
         default: '1'
