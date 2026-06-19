@@ -99,7 +99,7 @@ jobs:
           severity: '${{ inputs.trivy-severity }}'
 
       - name: Upload Trivy SARIF results as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: trivy-sarif
@@ -124,7 +124,7 @@ jobs:
           scanners: 'license'
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: sbom-spdx
@@ -132,7 +132,7 @@ jobs:
           retention-days: ${{ inputs.sbom-retention-days }}
 
       - name: Upload reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: trivy-reports
@@ -179,7 +179,7 @@ jobs:
           severity: '${{ inputs.trivy-severity }}'
 
       - name: Upload Trivy SARIF results as artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: trivy-image-sarif
@@ -204,7 +204,7 @@ jobs:
           scanners: 'license'
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: sbom-image-spdx
@@ -212,7 +212,7 @@ jobs:
           retention-days: ${{ inputs.sbom-retention-days }}
 
       - name: Upload reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: trivy-image-reports
