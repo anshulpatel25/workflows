@@ -57,6 +57,11 @@ on:
         required: false
         type: string
         default: '1'
+      free-disk-space:
+        description: 'Free up disk space on the runner before Docker operations'
+        required: false
+        type: boolean
+        default: true
     secrets:
       registry-username:
         description: 'Docker registry username (defaults to github.repository_owner)'
@@ -160,6 +165,20 @@ jobs:
       actions: read
 
     steps:
+      - name: Free Disk Space
+        if: ${{ inputs.free-disk-space }}
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/share/boost
+          sudo docker image prune --all --force || true
+          echo "Disk space after cleanup:"
+          df -h
+
       - name: Checkout code
         uses: actions/checkout@v7
 
@@ -241,6 +260,20 @@ jobs:
       packages: write
 
     steps:
+      - name: Free Disk Space
+        if: ${{ inputs.free-disk-space }}
+        run: |
+          echo "Disk space before cleanup:"
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/share/boost
+          sudo docker image prune --all --force || true
+          echo "Disk space after cleanup:"
+          df -h
+
       - name: Checkout code
         uses: actions/checkout@v7
 
